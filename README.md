@@ -47,7 +47,6 @@ All configuration is done via `data-*` attributes on the script tag.
 | `data-prompt` | string | `Summarize this page:` | Custom prompt sent to AI services |
 | `data-share` | `true` \| `false` | `true` | Enable/disable share section |
 | `data-share-services` | string | `whatsapp,telegram,x,gmail,linkedin` | Comma-separated list of share services |
-| `data-powered-by` | `true` \| `false` | `true` | Show/hide "powered by AICW" footer |
 
 ### Colors
 
