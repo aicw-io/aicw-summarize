@@ -161,8 +161,7 @@
     prompt: 'Summarize this page:',
     mobilePosition: 'bottom',
     shareEnabled: true,
-    shareServices: 'whatsapp,telegram,x,gmail,linkedin',
-    poweredBy: true
+    shareServices: 'whatsapp,telegram,x,gmail,linkedin'
   };
 
   // ========================================================================
@@ -215,10 +214,6 @@
     // Label override
     config.label = scriptEl.getAttribute('data-label') || '';
 
-    // Powered by
-    var poweredBy = scriptEl.getAttribute('data-powered-by');
-    config.poweredBy = poweredBy !== 'false' && poweredBy !== '0';
-
     return config;
   }
 
@@ -268,9 +263,6 @@
     .aicw-popup-icon-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:rgba(0,0,0,0.04);color:' + iconColor + ';text-decoration:none;transition:background 0.15s,transform 0.1s}\
     .aicw-popup-icon-btn:hover{background:rgba(0,0,0,0.08);transform:scale(1.05)}\
     .aicw-popup-icon-btn svg{width:22px;height:22px}\
-    .aicw-powered-by{display:block;text-align:right;padding:8px 12px 4px;font-size:10px;color:rgba(0,0,0,0.35)}\
-    .aicw-powered-by a{color:rgba(0,0,0,0.35);text-decoration:none}\
-    .aicw-powered-by a:hover{color:rgba(0,0,0,0.5)}\
     .aicw-popup-separator{height:1px;background:rgba(0,0,0,0.08);margin:8px 0}\
     .aicw-popup-close{position:absolute;top:8px;right:8px;display:flex;align-items:center;justify-content:center;width:20px;height:20px;background:rgba(0,0,0,0.05);border:none;border-radius:4px;color:#9ca3af;font-size:14px;cursor:pointer;transition:all 0.15s;z-index:1}\
     .aicw-popup-close:hover{background:rgba(0,0,0,0.1);color:' + textColor + '}\
@@ -561,20 +553,6 @@
       });
 
       popup.appendChild(shareRow);
-    }
-
-    // Powered by AICW
-    if (config.poweredBy) {
-      var poweredBy = document.createElement('span');
-      poweredBy.className = 'aicw-powered-by';
-      poweredBy.appendChild(document.createTextNode('powered by '));
-      var poweredByLink = document.createElement('a');
-      poweredByLink.href = 'https://aicw.io';
-      poweredByLink.target = '_blank';
-      poweredByLink.rel = 'noopener noreferrer';
-      poweredByLink.textContent = 'AICW';
-      poweredBy.appendChild(poweredByLink);
-      popup.appendChild(poweredBy);
     }
 
     document.body.appendChild(popup);
