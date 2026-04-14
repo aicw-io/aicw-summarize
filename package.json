@@ -1,0 +1,14 @@
+{
+  "name": "aicw-widget-ask-ai",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Standalone embeddable widget for AI-powered page summarization and sharing",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --watch",
+    "validate": "node build.js --validate-only"
+  },
+  "devDependencies": {
+    "terser": "^5.37.0"
+  }
+}
