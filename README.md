@@ -195,4 +195,4 @@ npm run validate
 
 ## License
 
-MIT
+MIT - made by [AICW](https://www.aicw.io)
