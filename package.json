@@ -1,5 +1,5 @@
 {
-  "name": "aicw-widget-ask-ai",
+  "name": "aicw-summarize",
   "private": true,
   "version": "1.0.0",
   "description": "Standalone embeddable widget for AI-powered page summarization and sharing",

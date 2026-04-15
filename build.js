@@ -18,7 +18,7 @@ const { execSync } = require('child_process');
 const vm = require('vm');
 
 const SOURCE_FILE = path.join(__dirname, 'src', 'widget.js');
-const OUTPUT_FILE = path.join(__dirname, 'dist', 'aicw-widget-ask-ai.min.js');
+const OUTPUT_FILE = path.join(__dirname, 'dist', 'aicw-summarize.min.js');
 
 const colors = {
   reset: '\x1b[0m',

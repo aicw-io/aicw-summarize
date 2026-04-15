@@ -1,13 +1,15 @@
-# AICW Ask AI Widget
+# AICW Summarize Widget
 
 A lightweight, standalone widget that adds a floating "Summarize with AI" and "Share" button to any website. Zero dependencies, no tracking, no analytics, just a clean UI widget embeddable with a single `<script>` tag.
+
+**IMPORTANT**: this widget is **not** generating AI summary of the page! It shows summary from the meta description field by default, and allowing users to click their  favorite AI service to generate summary of the current page. 
 
 ## Quick Start
 
 Add this single line to your HTML, right before `</body>`:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-widget-ask-ai@latest/dist/aicw-widget-ask-ai.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"></script>
 ```
 
 That's it. A floating "Summarize" button will appear on the right side of the page. Clicking it opens a popup with links to AI services (ChatGPT, Claude, Perplexity, Gemini, Grok) and share buttons (WhatsApp, Telegram, X, Gmail, LinkedIn).
@@ -15,7 +17,7 @@ That's it. A floating "Summarize" button will appear on the right side of the pa
 To pin to a specific release (recommended for production):
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-widget-ask-ai@1.0.0/dist/aicw-widget-ask-ai.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@1.0.0/dist/aicw-summarize.min.js"></script>
 ```
 
 ## How It Works
@@ -88,13 +90,13 @@ All configuration is done via `data-*` attributes on the script tag.
 ### Minimal (all defaults)
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-widget-ask-ai@latest/dist/aicw-widget-ask-ai.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"></script>
 ```
 
 ### Custom position and label
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-widget-ask-ai@latest/dist/aicw-widget-ask-ai.min.js"
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
   data-position="bottom"
   data-label="Ask AI"
 ></script>
@@ -103,7 +105,7 @@ All configuration is done via `data-*` attributes on the script tag.
 ### Custom colors (dark theme)
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-widget-ask-ai@latest/dist/aicw-widget-ask-ai.min.js"
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
   data-bg-color="rgba(30,30,30,0.95)"
   data-text-color="#e5e7eb"
   data-accent-color="#818cf8"
@@ -116,7 +118,7 @@ All configuration is done via `data-*` attributes on the script tag.
 ### AI-only (no share buttons)
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-widget-ask-ai@latest/dist/aicw-widget-ask-ai.min.js"
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
   data-share="false"
 ></script>
 ```
@@ -124,7 +126,7 @@ All configuration is done via `data-*` attributes on the script tag.
 ### Share-only (no AI)
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-widget-ask-ai@latest/dist/aicw-widget-ask-ai.min.js"
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
   data-summarize="false"
   data-share-services="whatsapp,x,linkedin,copy"
 ></script>
@@ -133,7 +135,7 @@ All configuration is done via `data-*` attributes on the script tag.
 ### Specific AI services + custom prompt
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-widget-ask-ai@latest/dist/aicw-widget-ask-ai.min.js"
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
   data-services="claude,chatgpt"
   data-prompt="Explain this article in simple terms:"
   data-share="false"
@@ -143,7 +145,7 @@ All configuration is done via `data-*` attributes on the script tag.
 ### Left sidebar with brand colors
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-widget-ask-ai@latest/dist/aicw-widget-ask-ai.min.js"
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
   data-position="left"
   data-accent-color="#4f46e5"
   data-button-bg-color="#4f46e5"
@@ -162,13 +164,13 @@ If you prefer to self-host instead of using the CDN:
 ### Build
 
 ```bash
-git clone https://github.com/aicw-io/aicw-widget-ask-ai.git
-cd aicw-widget-ask-ai
+git clone https://github.com/aicw-io/aicw-summarize.git
+cd aicw-summarize
 npm install
 npm run build
 ```
 
-Output: `dist/aicw-widget-ask-ai.min.js` — copy this file to your server and reference it directly.
+Output: `dist/aicw-summarize.min.js` — copy this file to your server and reference it directly.
 
 ### Development (watch mode)
 

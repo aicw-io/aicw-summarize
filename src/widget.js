@@ -11,7 +11,7 @@
  * Configuration via data attributes on the script tag.
  * See README.md for full documentation.
  */
-(function() {
+(function () {
   'use strict';
 
   // ========================================================================
@@ -175,7 +175,7 @@
     if (!scriptEl) {
       var scripts = document.getElementsByTagName('script');
       for (var i = 0; i < scripts.length; i++) {
-        if (scripts[i].src && scripts[i].src.indexOf('aicw-widget-ask-ai') !== -1) {
+        if (scripts[i].src && scripts[i].src.indexOf('aicw-summarize') !== -1) {
           scriptEl = scripts[i];
           break;
         }
@@ -290,9 +290,9 @@
     if (!servicesStr || servicesStr === 'all') {
       return Object.keys(AI_SERVICES);
     }
-    return servicesStr.toLowerCase().split(',').map(function(s) {
+    return servicesStr.toLowerCase().split(',').map(function (s) {
       return s.trim();
-    }).filter(function(s) {
+    }).filter(function (s) {
       return AI_SERVICES[s];
     });
   }
@@ -301,9 +301,9 @@
     if (!servicesStr || servicesStr === 'all') {
       return Object.keys(SHARE_SERVICES);
     }
-    return servicesStr.toLowerCase().split(',').map(function(s) {
+    return servicesStr.toLowerCase().split(',').map(function (s) {
       return s.trim();
-    }).filter(function(s) {
+    }).filter(function (s) {
       return SHARE_SERVICES[s];
     });
   }
@@ -344,9 +344,9 @@
     var url = window.location.href;
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(url).then(function() {
+      navigator.clipboard.writeText(url).then(function () {
         showCopySuccess(copyBtn);
-      }).catch(function() {
+      }).catch(function () {
         fallbackCopy(url, copyBtn);
       });
     } else {
@@ -384,7 +384,7 @@
     svgEl.outerHTML = SHARE_ICONS.checkmark;
     copyBtn.title = 'Copied!';
 
-    setTimeout(function() {
+    setTimeout(function () {
       var newSvg = copyBtn.querySelector('svg');
       if (newSvg) newSvg.outerHTML = originalIcon;
       copyBtn.title = originalTitle;
@@ -441,7 +441,7 @@
     closeBtn.title = 'Close';
     closeBtn.setAttribute('aria-label', 'Close popup');
     closeBtn.innerHTML = '&times;';
-    closeBtn.addEventListener('click', function(e) {
+    closeBtn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
       closePopup();
@@ -477,7 +477,7 @@
       var summarizeRow = document.createElement('div');
       summarizeRow.className = 'aicw-popup-icons-row';
 
-      services.forEach(function(serviceKey) {
+      services.forEach(function (serviceKey) {
         var service = AI_SERVICES[serviceKey];
         var icon = AI_ICONS[serviceKey];
         if (!service || !icon) return;
@@ -495,7 +495,7 @@
         item.setAttribute('aria-label', 'Summarize with ' + service.name);
         item.innerHTML = icon;
 
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function () {
           closePopup();
         });
 
@@ -521,7 +521,7 @@
       var shareRow = document.createElement('div');
       shareRow.className = 'aicw-popup-icons-row';
 
-      shareServices.forEach(function(serviceKey) {
+      shareServices.forEach(function (serviceKey) {
         var service = SHARE_SERVICES[serviceKey];
         var icon = SHARE_ICONS[serviceKey];
         if (!service || !icon) return;
@@ -535,7 +535,7 @@
 
         if (service.type === 'clipboard') {
           item.href = '#';
-          item.addEventListener('click', function(e) {
+          item.addEventListener('click', function (e) {
             e.preventDefault();
             handleCopyLink(item);
           });
@@ -544,7 +544,7 @@
           item.href = url;
           item.target = '_blank';
           item.rel = 'noopener noreferrer';
-          item.addEventListener('click', function() {
+          item.addEventListener('click', function () {
             closePopup();
           });
         }
@@ -625,7 +625,7 @@
     popup.classList.add('aicw-visible');
     popupState.isOpen = true;
 
-    setTimeout(function() {
+    setTimeout(function () {
       document.addEventListener('click', handleClickOutside);
     }, 10);
   }
@@ -720,7 +720,7 @@
     triggerText.textContent = buttonText;
     trigger.appendChild(triggerText);
 
-    trigger.addEventListener('click', function(e) {
+    trigger.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
       togglePopup();
@@ -736,7 +736,7 @@
     closeBtn.title = 'Hide';
     closeBtn.setAttribute('aria-label', 'Close bar');
     closeBtn.innerHTML = '&times;';
-    closeBtn.addEventListener('click', function(e) {
+    closeBtn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
       bar.style.display = 'none';
