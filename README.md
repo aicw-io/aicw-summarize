@@ -14,10 +14,12 @@ Add this single line to your HTML, right before `</body>`:
 
 That's it. A floating "Summarize" button will appear on the right side of the page. Clicking it opens a popup with links to AI services (ChatGPT, Gemini, Claude, Perplexity, Grok) and share buttons (WhatsApp, Telegram, X, Gmail, LinkedIn). The widget automatically detects dark/light mode from your browser and site settings.
 
+This uses jsDelivr's `@latest` which points to the most recent GitHub release. A new release is created automatically whenever `src/` changes are pushed to main.
+
 To pin to a specific release (recommended for production):
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@1.0.0/dist/aicw-summarize.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@v20260416.162431/dist/aicw-summarize.min.js"></script>
 ```
 
 ## How It Works
@@ -49,6 +51,7 @@ All configuration is done via `data-*` attributes on the script tag.
 | `data-prompt` | string | `Summarize this page:` | Custom prompt sent to AI services. Use `\|` to separate multiple prompts — one is picked randomly per click |
 | `data-share` | `true` \| `false` | `true` | Enable/disable share section |
 | `data-share-services` | string | `whatsapp,telegram,x,gmail,linkedin` | Comma-separated list of share services |
+| `data-paths` | string | (empty) | Comma-separated regex patterns for URL paths where the widget should appear. Empty = all pages |
 
 ### Dark Mode
 
@@ -199,6 +202,26 @@ Use `|` to separate multiple prompt variations — one is picked randomly each t
   data-services="claude,chatgpt"
   data-prompt="Explain this article in simple terms:"
   data-share="false"
+></script>
+```
+
+### Show only on specific pages
+
+Use `data-paths` with regex patterns (comma-separated). Only exact top-level paths, not their children:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
+  data-paths="^/$,^/meditate/$,^/visual/$,^/games/$"
+></script>
+```
+
+This shows the widget on `/`, `/meditate/`, `/visual/`, `/games/` but **not** on child pages like `/meditate/something` or `/games/level-1`.
+
+Show on all article pages:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
+  data-paths="^/blog/"
 ></script>
 ```
 

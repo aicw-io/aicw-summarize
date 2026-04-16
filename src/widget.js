@@ -295,6 +295,9 @@
     // Label override
     config.label = scriptEl.getAttribute('data-label') || '';
 
+    // Path filtering (comma-separated regex patterns, empty = show on all pages)
+    config.paths = scriptEl.getAttribute('data-paths') || '';
+
     return config;
   }
 
@@ -902,6 +905,24 @@
 
     // Skip iframes (avoid recursion / visual clutter)
     if (window !== window.parent) return;
+
+    // Path filtering: skip if current path doesn't match any pattern
+    if (config.paths) {
+      var pathname = window.location.pathname;
+      var patterns = config.paths.split(',').map(function (p) { return p.trim(); }).filter(Boolean);
+      var matched = false;
+      for (var i = 0; i < patterns.length; i++) {
+        try {
+          if (new RegExp(patterns[i]).test(pathname)) {
+            matched = true;
+            break;
+          }
+        } catch (e) {
+          // Invalid regex — skip pattern
+        }
+      }
+      if (!matched) return;
+    }
 
     // Parse services
     var services = config.enabled !== false ? parseServices(config.services) : [];
