@@ -898,6 +898,67 @@
   }
 
   // ========================================================================
+  // Path Matching (SPA-aware)
+  // ========================================================================
+  function matchesCurrentPath(config) {
+    if (!config.paths) return true;
+    var pathname = window.location.pathname;
+    var patterns = config.paths.split(',').map(function (p) { return p.trim(); }).filter(Boolean);
+    if (patterns.length === 0) return true;
+    for (var i = 0; i < patterns.length; i++) {
+      try {
+        if (new RegExp(patterns[i]).test(pathname)) return true;
+      } catch (e) {
+        // Invalid regex — skip pattern
+      }
+    }
+    return false;
+  }
+
+  function updateVisibility() {
+    var bar = document.getElementById('aicw-ask-ai-bar');
+    var popup = document.getElementById('aicw-ask-ai-popup');
+    if (!bar) return;
+
+    var show = matchesCurrentPath(savedConfig);
+    if (show) {
+      bar.style.display = '';
+      if (popup) popup.style.display = '';
+    } else {
+      if (popupState.isOpen) closePopup();
+      bar.style.display = 'none';
+      if (popup) popup.style.display = 'none';
+    }
+  }
+
+  // ========================================================================
+  // SPA Navigation Listeners
+  // ========================================================================
+  function setupNavigationListeners() {
+    if (!savedConfig.paths) return;
+
+    // Browser back/forward
+    window.addEventListener('popstate', updateVisibility);
+
+    // Intercept pushState/replaceState for client-side routing
+    var origPushState = history.pushState;
+    var origReplaceState = history.replaceState;
+
+    history.pushState = function () {
+      origPushState.apply(this, arguments);
+      updateVisibility();
+    };
+    history.replaceState = function () {
+      origReplaceState.apply(this, arguments);
+      updateVisibility();
+    };
+
+    // Framework-specific navigation events (Astro, etc.)
+    document.addEventListener('astro:page-load', updateVisibility);
+    document.addEventListener('astro:after-swap', updateVisibility);
+  }
+
+  // ========================================================================
   // Initialize Widget
   // ========================================================================
   function initWidget() {
@@ -906,24 +967,6 @@
     // Skip iframes (avoid recursion / visual clutter)
     if (window !== window.parent) return;
 
-    // Path filtering: skip if current path doesn't match any pattern
-    if (config.paths) {
-      var pathname = window.location.pathname;
-      var patterns = config.paths.split(',').map(function (p) { return p.trim(); }).filter(Boolean);
-      var matched = false;
-      for (var i = 0; i < patterns.length; i++) {
-        try {
-          if (new RegExp(patterns[i]).test(pathname)) {
-            matched = true;
-            break;
-          }
-        } catch (e) {
-          // Invalid regex — skip pattern
-        }
-      }
-      if (!matched) return;
-    }
-
     // Parse services
     var services = config.enabled !== false ? parseServices(config.services) : [];
     var shareServices = config.shareEnabled !== false ? parseShareServices(config.shareServices) : [];
@@ -931,13 +974,19 @@
     // Only proceed if at least one feature is enabled with services
     if (services.length === 0 && shareServices.length === 0) return;
 
-    // Inject styles and create bar + popup
+    // Inject styles and create bar + popup (always, so SPA nav can toggle visibility)
     injectStyles(config);
     createBar(config, services, shareServices);
     createPopup(config, services, shareServices);
 
+    // Apply initial path visibility
+    updateVisibility();
+
     // Set up live theme switching listeners
     setupThemeListeners(config);
+
+    // Set up SPA navigation listeners for path filtering
+    setupNavigationListeners();
   }
 
   // ========================================================================
