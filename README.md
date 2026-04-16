@@ -2,6 +2,14 @@
 
 A lightweight, standalone widget that adds a floating "Summarize with AI" and "Share" button to any website. Zero dependencies, no tracking, no analytics, just a clean UI widget embeddable with a single `<script>` tag.
 
+**Live Demo**
+
+- Visit [www.aicw.io](https://aicw.io?utm_source=github) to see it live
+
+**Video:**
+
+![aicw-summarize-demo.gif](aicw-summarize-demo.gif)
+
 **IMPORTANT**: this widget is **not** generating AI summary of the page! It shows summary from the meta description field by default, and allowing users to click their  favorite AI service to generate summary of the current page. 
 
 ## Quick Start
