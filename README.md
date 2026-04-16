@@ -207,15 +207,15 @@ Use `|` to separate multiple prompt variations — one is picked randomly each t
 
 ### Show only on specific pages
 
-Use `data-paths` with regex patterns (comma-separated). Only exact top-level paths, not their children:
+Use `data-paths` with regex patterns (comma-separated). For example, we want to show only on exact top-level paths like `/meditate/`, `/visuals/` but not on their children like `/meditate/calm/` or `/visuals/calming`:
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
-  data-paths="^/$,^/meditate/$,^/visual/$,^/games/$"
+  data-paths="^/$,^/meditate/$,^/visuals/$,^/games/$"
 ></script>
 ```
 
-This shows the widget on `/`, `/meditate/`, `/visual/`, `/games/` but **not** on child pages like `/meditate/something` or `/games/level-1`.
+This shows the widget on `/`, `/meditate/`, `/visuals/`, `/games/` but **not** on child pages like `/meditate/something` or `/games/level-1`.
 
 Show on all article pages:
 
