@@ -7,9 +7,10 @@ on:
       - 'src/**'
       - 'build.js'
       - 'package.json'
+      - 'dist/**'
 
 jobs:
-  build-and-release:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -23,33 +24,15 @@ jobs:
 
       - run: npm ci
 
-      - run: npm run build
-
-      - name: Check for dist changes
-        id: diff
-        run: |
-          git diff --quiet dist/ && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
-
-      - name: Generate version tag
-        if: steps.diff.outputs.changed == 'true'
-        id: version
-        run: echo "tag=v$(date -u +'%Y%m%d.%H%M%S')" >> "$GITHUB_OUTPUT"
-
-      - name: Commit dist
-        if: steps.diff.outputs.changed == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add dist/
-          git commit -m "build: update dist (${{ steps.version.outputs.tag }})"
-          git push
+      - name: Validate build
+        run: npm run validate
 
       - name: Create release
-        if: steps.diff.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ steps.version.outputs.tag }}" \
-            --title "${{ steps.version.outputs.tag }}" \
-            --notes "Automated build from src changes" \
+          TAG="v$(date -u +'%Y%m%d.%H%M%S')"
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes "Automated release from src changes" \
             --latest
