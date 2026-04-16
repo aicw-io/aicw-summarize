@@ -1,5 +1,5 @@
 /**
- * AICW Ask AI Widget
+ * AICW Summarize Widget
  *
  * Standalone embeddable widget that lets visitors summarize any page
  * with AI services (ChatGPT, Claude, Perplexity, Gemini, Grok)
@@ -37,6 +37,14 @@
     grok: {
       name: 'Grok',
       url: 'https://x.com/i/grok?text='
+    },
+    deepseek: {
+      name: 'DeepSeek',
+      url: 'https://chat.deepseek.com/?q='
+    },
+    copilot: {
+      name: 'Copilot',
+      url: 'https://copilot.microsoft.com/?q='
     }
   };
 
@@ -85,6 +93,21 @@
       urlTemplate: 'mailto:?subject={title}&body={url}',
       type: 'redirect'
     },
+    threads: {
+      name: 'Threads',
+      urlTemplate: 'https://www.threads.net/intent/post?text={text}%20{url}',
+      type: 'redirect'
+    },
+    bluesky: {
+      name: 'Bluesky',
+      urlTemplate: 'https://bsky.app/intent/compose?text={text}%20{url}',
+      type: 'redirect'
+    },
+    mastodon: {
+      name: 'Mastodon',
+      urlTemplate: 'https://mastodonshare.com/?text={text}&url={url}',
+      type: 'redirect'
+    },
     copy: {
       name: 'Copy Link',
       urlTemplate: null,
@@ -101,7 +124,9 @@
     claude: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="m3.127 10.604 3.135-1.76.053-.153-.053-.085H6.11l-.525-.032-1.791-.048-1.554-.065-1.505-.08-.38-.081L0 7.832l.036-.234.32-.214.455.04 1.009.069 1.513.105 1.097.064 1.626.17h.259l.036-.105-.089-.065-.068-.064-1.566-1.062-1.695-1.121-.887-.646-.48-.327-.243-.306-.104-.67.435-.48.585.04.15.04.593.456 1.267.981 1.654 1.218.242.202.097-.068.012-.049-.109-.181-.9-1.626-.96-1.655-.428-.686-.113-.411a2 2 0 0 1-.068-.484l.496-.674L4.446 0l.662.089.279.242.411.94.666 1.48 1.033 2.014.302.597.162.553.06.17h.105v-.097l.085-1.134.157-1.392.154-1.792.052-.504.25-.605.497-.327.387.186.319.456-.045.294-.19 1.23-.37 1.93-.243 1.29h.142l.161-.16.654-.868 1.097-1.372.484-.545.565-.601.363-.287h.686l.505.751-.226.775-.707.895-.585.759-.839 1.13-.524.904.048.072.125-.012 1.897-.403 1.024-.186 1.223-.21.553.258.06.263-.218.536-1.307.323-1.533.307-2.284.54-.028.02.032.04 1.029.098.44.024h1.077l2.005.15.525.346.315.424-.053.323-.807.411-3.631-.863-.872-.218h-.12v.073l.726.71 1.331 1.202 1.667 1.55.084.383-.214.302-.226-.032-1.464-1.101-.565-.497-1.28-1.077h-.084v.113l.295.432 1.557 2.34.08.718-.112.234-.404.141-.444-.08-.911-1.28-.94-1.44-.759-1.291-.093.053-.448 4.821-.21.246-.484.186-.403-.307-.214-.496.214-.98.258-1.28.21-1.016.19-1.263.112-.42-.008-.028-.092.012-.953 1.307-1.448 1.957-1.146 1.227-.274.109-.477-.247.045-.44.266-.39 1.586-2.018.956-1.25.617-.723-.004-.105h-.036l-4.212 2.736-.75.096-.324-.302.04-.496.154-.162 1.267-.871z"/></svg>',
     perplexity: '<svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 .188a.5.5 0 0 1 .503.5V4.03l3.022-2.92.059-.048a.51.51 0 0 1 .49-.054.5.5 0 0 1 .306.46v3.247h1.117l.1.01a.5.5 0 0 1 .403.49v5.558a.5.5 0 0 1-.503.5H12.38v3.258a.5.5 0 0 1-.312.462.51.51 0 0 1-.55-.11l-3.016-3.018v3.448c0 .275-.225.5-.503.5a.5.5 0 0 1-.503-.5v-3.448l-3.018 3.019a.51.51 0 0 1-.548.11.5.5 0 0 1-.312-.463v-3.258H2.503a.5.5 0 0 1-.503-.5V5.215l.01-.1c.047-.229.25-.4.493-.4H3.62V1.469l.006-.074a.5.5 0 0 1 .302-.387.51.51 0 0 1 .547.102l3.023 2.92V.687c0-.276.225-.5.503-.5M4.626 9.333v3.984l2.87-2.872v-4.01zm3.877 1.113 2.871 2.871V9.333l-2.87-2.897zm3.733-1.668a.5.5 0 0 1 .145.35v1.145h.612V5.715H9.201zm-9.23 1.495h.613V9.13c0-.131.052-.257.145-.35l3.033-3.064h-3.79zm1.62-5.558H6.76L4.626 2.652zm4.613 0h2.134V2.652z"/></svg>',
     gemini: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0c.17 0 .31.115.355.278a9.6 9.6 0 0 0 .494 1.46c.532 1.235 1.261 2.316 2.187 3.242.926.926 2.007 1.655 3.242 2.187a9.63 9.63 0 0 0 1.46.494.367.367 0 0 1 0 .712 9.6 9.6 0 0 0-1.46.494c-1.235.532-2.316 1.261-3.242 2.187-.926.926-1.655 2.007-2.187 3.242a9.63 9.63 0 0 0-.494 1.46.367.367 0 0 1-.711 0 9.6 9.6 0 0 0-.494-1.46c-.532-1.235-1.26-2.316-2.187-3.242-.926-.926-2.007-1.655-3.242-2.187a9.63 9.63 0 0 0-1.46-.494.367.367 0 0 1 0-.712 9.6 9.6 0 0 0 1.46-.494c1.235-.532 2.316-1.26 3.242-2.187.926-.926 1.655-2.007 2.187-3.242a9.63 9.63 0 0 0 .494-1.46A.367.367 0 0 1 8 0z"/></svg>',
-    grok: '<svg viewBox="0 0 512 510" fill="currentColor"><path d="M213.235 306.019l178.976-180.002v.169l51.695-51.763c-.924 1.32-1.86 2.605-2.785 3.89-39.281 54.164-58.46 80.649-43.07 146.922l-.09-.101c10.61 45.11-.744 95.137-37.398 131.836-46.216 46.306-120.167 56.611-181.063 14.928l42.462-19.675c38.863 15.278 81.392 8.57 111.947-22.03 30.566-30.6 37.432-75.159 22.065-112.252-2.92-7.025-11.67-8.795-17.792-4.263l-124.947 92.341zm-25.786 22.437l-.033.034L68.094 435.217c7.565-10.429 16.957-20.294 26.327-30.149 26.428-27.803 52.653-55.359 36.654-94.302-21.422-52.112-8.952-113.177 30.724-152.898 41.243-41.254 101.98-51.661 152.706-30.758 11.23 4.172 21.016 10.114 28.638 15.639l-42.359 19.584c-39.44-16.563-84.629-5.299-112.207 22.313-37.298 37.308-44.84 102.003-1.128 143.81z"/></svg>'
+    grok: '<svg viewBox="0 0 512 510" fill="currentColor"><path d="M213.235 306.019l178.976-180.002v.169l51.695-51.763c-.924 1.32-1.86 2.605-2.785 3.89-39.281 54.164-58.46 80.649-43.07 146.922l-.09-.101c10.61 45.11-.744 95.137-37.398 131.836-46.216 46.306-120.167 56.611-181.063 14.928l42.462-19.675c38.863 15.278 81.392 8.57 111.947-22.03 30.566-30.6 37.432-75.159 22.065-112.252-2.92-7.025-11.67-8.795-17.792-4.263l-124.947 92.341zm-25.786 22.437l-.033.034L68.094 435.217c7.565-10.429 16.957-20.294 26.327-30.149 26.428-27.803 52.653-55.359 36.654-94.302-21.422-52.112-8.952-113.177 30.724-152.898 41.243-41.254 101.98-51.661 152.706-30.758 11.23 4.172 21.016 10.114 28.638 15.639l-42.359 19.584c-39.44-16.563-84.629-5.299-112.207 22.313-37.298 37.308-44.84 102.003-1.128 143.81z"/></svg>',
+    deepseek: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm3.248 18.372c-.47.213-.963.346-1.472.398a4.7 4.7 0 0 1-1.538-.084c-.49-.117-.96-.31-1.388-.572a5.6 5.6 0 0 1-1.138-.912c-.18-.18-.347-.373-.498-.578l-.066-.093c-.025-.037-.012-.05.031-.037.34.1.687.172 1.04.218.354.047.71.062 1.066.047.24-.01.478-.034.716-.072.083-.013.1-.034.037-.084a3.3 3.3 0 0 0-.578-.337 7.2 7.2 0 0 0-1.382-.503 8 8 0 0 1-1.174-.437 3.6 3.6 0 0 1-.86-.578 2.2 2.2 0 0 1-.534-.756 1.7 1.7 0 0 1-.131-.578c-.006-.16.022-.316.078-.466.1-.272.272-.503.497-.672.162-.122.34-.222.528-.297.025-.013.05-.022.075-.025s.034.01.022.034a1.5 1.5 0 0 0-.116.278 1.17 1.17 0 0 0 .078.894c.11.213.275.39.478.516.247.153.519.26.803.316.56.106 1.128.094 1.685-.034a7 7 0 0 0 .95-.31c.025-.012.05-.018.075-.012s.031.024.019.05a2.6 2.6 0 0 1-.435.677 3.2 3.2 0 0 1-.716.578c.316.025.628-.006.934-.094a2.5 2.5 0 0 0 .822-.416c.24-.19.447-.416.61-.672.178-.275.31-.578.39-.897a3.2 3.2 0 0 0 .11-.94 4.2 4.2 0 0 0-.16-.96 5.3 5.3 0 0 0-.434-1.1 6.7 6.7 0 0 0-.703-1.069 8 8 0 0 0-.916-.947 7.8 7.8 0 0 0-1.069-.791 5.8 5.8 0 0 0-1.16-.56 3.8 3.8 0 0 0-1.194-.228c-.4-.013-.79.072-1.147.247a2.5 2.5 0 0 0-.847.678 2.8 2.8 0 0 0-.497.934 3.7 3.7 0 0 0-.178 1.069c-.006.37.034.74.116 1.1.094.403.228.794.397 1.166.178.39.39.766.634 1.116.247.356.525.69.828 1.003.297.306.616.59.956.847.328.247.675.469 1.034.66.35.19.716.353 1.094.484.362.125.734.216 1.113.272.362.05.728.062 1.091.034.356-.028.706-.097 1.044-.203a3.5 3.5 0 0 0 .934-.466c.284-.2.538-.44.753-.712.222-.284.397-.6.516-.94.125-.356.194-.731.203-1.11a4.3 4.3 0 0 0-.131-1.147 6 6 0 0 0-.416-1.116c.31.31.578.66.797 1.04.213.372.378.772.49 1.191.106.403.156.819.15 1.235-.006.409-.072.816-.194 1.207a3.8 3.8 0 0 1-.553 1.075 3.7 3.7 0 0 1-.86.844z"/></svg>',
+    copilot: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zm4.55 15.232c-.354.477-.83.768-1.372.768H8.822c-.543 0-1.018-.29-1.372-.768-.354-.478-.55-1.127-.55-1.803v-2.717c0-2.504 2.093-4.538 4.669-4.647l.431-.018.431.018c2.576.11 4.669 2.143 4.669 4.647v2.717c0 .676-.196 1.325-.55 1.803zm-1.372-.232c.225 0 .449-.147.603-.395.154-.248.247-.59.247-.94v-2.717c0-1.894-1.632-3.438-3.638-3.538L12 8.39l-.39.02c-2.006.1-3.638 1.644-3.638 3.538v2.717c0 .35.093.692.247.94.154.248.378.395.603.395z"/><path d="M10 13a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm6 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>'
   };
 
   // ========================================================================
@@ -116,6 +141,9 @@
     reddit: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.167 8a.83.83 0 0 0-.83.83c0 .459.372.84.83.831a.831.831 0 0 0 0-1.661m1.843 3.647c.315 0 1.403-.038 1.976-.611a.23.23 0 0 0 0-.306.213.213 0 0 0-.306 0c-.353.363-1.126.487-1.67.487-.545 0-1.308-.124-1.671-.487a.213.213 0 0 0-.306 0 .213.213 0 0 0 0 .306c.564.563 1.652.61 1.977.61zm.992-2.807c0 .458.373.83.831.83s.83-.381.83-.83a.831.831 0 0 0-1.66 0z"/><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.828-1.165c-.315 0-.602.124-.812.325-.801-.573-1.9-.945-3.121-.993l.534-2.501 1.738.372a.83.83 0 1 0 .83-.869.83.83 0 0 0-.744.468l-1.938-.41a.2.2 0 0 0-.153.028.2.2 0 0 0-.086.134l-.592 2.788c-1.24.038-2.358.41-3.17.992-.21-.2-.496-.324-.81-.324a1.163 1.163 0 0 0-.478 2.224q-.03.17-.029.353c0 1.795 2.091 3.256 4.669 3.256s4.668-1.451 4.668-3.256c0-.114-.01-.238-.029-.353.401-.181.688-.592.688-1.069 0-.65-.525-1.165-1.165-1.165"/></svg>',
     gmail: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z"/></svg>',
     email: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/></svg>',
+    threads: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.508 5.467l-2.382.636c-1.088-3.922-3.517-5.937-7.216-5.98h-.01c-2.68.017-4.748.893-6.15 2.604-1.26 1.536-1.93 3.773-1.992 6.653v.022c.063 2.883.734 5.12 1.993 6.651 1.4 1.707 3.47 2.584 6.15 2.604h.01c2.234-.016 3.983-.58 5.344-1.727 1.478-1.245 2.236-2.98 2.32-5.304l.007-.065c-.006-1.398-.262-2.558-.76-3.443-.425-.754-1.048-1.346-1.848-1.757a4.97 4.97 0 0 0-.157 1.317c0 2.127-.86 3.637-2.488 4.37-.95.427-2.1.524-3.2.368-1.18-.168-2.192-.66-2.85-1.387-.657-.727-1.005-1.663-1.005-2.705 0-2.543 1.968-4.288 4.797-4.288.962 0 1.783.176 2.453.523-.024-1.026-.206-1.82-.553-2.424-.446-.775-1.193-1.185-2.222-1.218-1.326-.043-2.425.49-2.93 1.262l-.03.046-2.07-1.395.036-.055C8.358 2.504 10.07 1.717 12.15 1.717l.098.002c1.81.056 3.218.756 4.07 2.024.722 1.074 1.1 2.524 1.157 4.432.516.283.983.625 1.393 1.027 1.012 1 1.63 2.427 1.838 4.243l.004.066c.005.136.008.273.008.41 0 2.912-.922 5.24-2.743 6.925C16.124 22.498 13.769 23.472 12.186 24zM10.35 13.457c0 .89.573 1.582 1.59 1.727.65.093 1.32.02 1.875-.203.95-.382 1.498-1.222 1.498-2.574 0-.325-.04-.638-.117-.936-.763-.346-1.68-.534-2.677-.534-1.565 0-2.169.827-2.169 2.52z"/></svg>',
+    bluesky: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.6 6.453.785 2.823 3.593 3.753 6.205 3.514-.005.002-.01.004-.015.005 3.177.544 6.041 1.877 3.42 6.635C13.857 26.065 24 20.093 24 13.235c0-3.354-1.963-6.435-5.202-7.995C16.046 4.747 13.087 8.686 12 10.8z"/></svg>',
+    mastodon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.268 5.313c-.35-2.578-2.617-4.61-5.304-5.004C17.51.242 15.792 0 11.813 0h-.03c-3.98 0-4.835.242-5.288.309C3.882.692 1.496 2.518.917 5.127.64 6.412.61 7.837.661 9.143c.074 1.874.088 3.745.26 5.611.118 1.24.325 2.47.62 3.68.55 2.237 2.777 4.098 4.96 4.857 2.336.792 4.849.923 7.256.38.265-.061.527-.132.786-.213.585-.184 1.27-.39 1.774-.753a.057.057 0 0 0 .023-.043v-1.809a.052.052 0 0 0-.02-.041.053.053 0 0 0-.046-.01 20 20 0 0 1-4.709.545c-2.73 0-3.463-1.284-3.674-1.818a5.6 5.6 0 0 1-.319-1.433.053.053 0 0 1 .066-.054 19.7 19.7 0 0 0 4.636.528c.164 0 .329 0 .494-.003l.138-.005c1.599-.05 3.282-.142 4.844-.582 2.105-.593 3.945-2.42 4.141-4.816.14-1.705.167-3.413.132-5.116q.001-.378-.005-.755zm-3.42 6.368h-2.59v-5.73c0-1.207-.502-1.82-1.508-1.82-1.112 0-1.67.727-1.67 2.165v3.13h-2.573V6.296c0-1.438-.558-2.165-1.67-2.165-1.006 0-1.508.613-1.508 1.82v5.73H5.739v-5.9c0-1.206.305-2.167.922-2.88.634-.714 1.464-1.08 2.499-1.08 1.198 0 2.104.459 2.71 1.378L12 3.678l.13-.215c.606-.919 1.512-1.378 2.71-1.378 1.035 0 1.865.366 2.499 1.08.617.713.922 1.674.922 2.88z"/></svg>',
     copy: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/></svg>',
     checkmark: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/></svg>'
   };
@@ -157,12 +185,57 @@
   // ========================================================================
   var DEFAULTS = {
     position: 'right',
-    services: 'gemini,chatgpt,perplexity,claude,grok',
+    services: 'chatgpt,gemini,claude,perplexity,grok',
     prompt: 'Summarize this page:',
     mobilePosition: 'bottom',
     shareEnabled: true,
     shareServices: 'whatsapp,telegram,x,gmail,linkedin'
   };
+
+  var LIGHT_COLORS = {
+    bgColor: 'rgba(255,255,255,0.92)',
+    textColor: '#374151',
+    iconColor: '#1f2937',
+    buttonBgColor: 'rgba(255,255,255,0.85)',
+    buttonTextColor: '',
+    accentColor: ''
+  };
+
+  var DARK_COLORS = {
+    bgColor: 'rgba(30,30,30,0.95)',
+    textColor: '#e5e7eb',
+    iconColor: '#d1d5db',
+    buttonBgColor: 'rgba(30,30,30,0.9)',
+    buttonTextColor: '#e5e7eb',
+    accentColor: '#818cf8'
+  };
+
+  // ========================================================================
+  // Dark Mode Detection
+  // ========================================================================
+  function detectDarkMode(themeStorage) {
+    // Check localStorage first (site-specific override)
+    if (themeStorage && themeStorage !== 'none') {
+      var parts = themeStorage.split('=');
+      if (parts.length === 2) {
+        var varName = parts[0].trim();
+        var darkValue = parts[1].trim();
+        try {
+          var stored = localStorage.getItem(varName);
+          if (stored !== null) {
+            return stored === darkValue;
+          }
+        } catch (e) {
+          // localStorage may be unavailable
+        }
+      }
+    }
+    // Fall back to browser preference
+    if (window.matchMedia) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  }
 
   // ========================================================================
   // Get Configuration from Script Tag
@@ -203,18 +276,39 @@
     config.shareEnabled = shareEnabled !== 'false' && shareEnabled !== '0';
     config.shareServices = scriptEl.getAttribute('data-share-services') || DEFAULTS.shareServices;
 
-    // Colors
-    config.bgColor = scriptEl.getAttribute('data-bg-color') || '';
-    config.textColor = scriptEl.getAttribute('data-text-color') || '';
-    config.accentColor = scriptEl.getAttribute('data-accent-color') || '';
-    config.iconColor = scriptEl.getAttribute('data-icon-color') || '';
-    config.buttonBgColor = scriptEl.getAttribute('data-button-bg-color') || '';
-    config.buttonTextColor = scriptEl.getAttribute('data-button-text-color') || '';
+    // Colors (explicit overrides from data attributes)
+    config._explicitBgColor = scriptEl.getAttribute('data-bg-color') || '';
+    config._explicitTextColor = scriptEl.getAttribute('data-text-color') || '';
+    config._explicitAccentColor = scriptEl.getAttribute('data-accent-color') || '';
+    config._explicitIconColor = scriptEl.getAttribute('data-icon-color') || '';
+    config._explicitButtonBgColor = scriptEl.getAttribute('data-button-bg-color') || '';
+    config._explicitButtonTextColor = scriptEl.getAttribute('data-button-text-color') || '';
+
+    // Theme detection
+    var autoTheme = scriptEl.getAttribute('data-auto-theme');
+    config.autoTheme = autoTheme !== 'false' && autoTheme !== '0';
+    config.themeStorage = scriptEl.getAttribute('data-theme-storage') || 'theme=dark';
+
+    // Apply theme colors (auto-detected defaults, overridden by explicit attrs)
+    applyThemeColors(config);
 
     // Label override
     config.label = scriptEl.getAttribute('data-label') || '';
 
     return config;
+  }
+
+  function applyThemeColors(config) {
+    var isDark = config.autoTheme ? detectDarkMode(config.themeStorage) : false;
+    var themeColors = isDark ? DARK_COLORS : LIGHT_COLORS;
+    config.isDark = isDark;
+
+    config.bgColor = config._explicitBgColor || themeColors.bgColor;
+    config.textColor = config._explicitTextColor || themeColors.textColor;
+    config.accentColor = config._explicitAccentColor || themeColors.accentColor;
+    config.iconColor = config._explicitIconColor || themeColors.iconColor;
+    config.buttonBgColor = config._explicitButtonBgColor || themeColors.buttonBgColor;
+    config.buttonTextColor = config._explicitButtonTextColor || themeColors.buttonTextColor;
   }
 
   // Save config at load time (document.currentScript only works during execution)
@@ -311,13 +405,21 @@
   // ========================================================================
   // Build AI Service URL with Prompt
   // ========================================================================
+  function resolvePrompt(prompt) {
+    if (prompt.indexOf('|') === -1) return prompt;
+    var parts = prompt.split('|').filter(function (p) { return p.trim().length > 0; });
+    if (parts.length === 0) return prompt;
+    return parts[Math.floor(Math.random() * parts.length)].trim();
+  }
+
   function buildServiceUrl(serviceKey, prompt) {
     var service = AI_SERVICES[serviceKey];
     if (!service) return null;
 
+    var resolved = resolvePrompt(prompt);
     var title = document.title || '';
     var url = window.location.href;
-    var fullPrompt = prompt + ' "' + title + '" ' + url;
+    var fullPrompt = resolved + ' "' + title + '" ' + url;
     return service.url + encodeURIComponent(fullPrompt);
   }
 
@@ -456,7 +558,7 @@
 
       var descLabel = document.createElement('div');
       descLabel.className = 'aicw-popup-description-label';
-      descLabel.textContent = 'Page summary';
+      descLabel.textContent = 'Summary';
       descWrapper.appendChild(descLabel);
 
       var descText = document.createElement('div');
@@ -471,7 +573,7 @@
     if (config.enabled && services && services.length > 0) {
       var title = document.createElement('div');
       title.className = 'aicw-popup-title';
-      title.textContent = 'Summarize with';
+      title.textContent = 'Summarize with AI';
       popup.appendChild(title);
 
       var summarizeRow = document.createElement('div');
@@ -668,7 +770,9 @@
   // Inject CSS Styles
   // ========================================================================
   function injectStyles(config) {
-    if (document.getElementById('aicw-ask-ai-styles')) return;
+    // Remove existing styles to allow re-injection on theme change
+    var existing = document.getElementById('aicw-ask-ai-styles');
+    if (existing) existing.parentNode.removeChild(existing);
 
     var accentColor = config.accentColor || config.textColor;
     var gradient = buildGradient(accentColor);
@@ -676,6 +780,48 @@
     style.id = 'aicw-ask-ai-styles';
     style.textContent = getWidgetCss(gradient, config);
     document.head.appendChild(style);
+  }
+
+  // ========================================================================
+  // Live Theme Switching
+  // ========================================================================
+  function reapplyTheme() {
+    applyThemeColors(savedConfig);
+    injectStyles(savedConfig);
+
+    // Rebuild popup to pick up new colors (inline styles on elements)
+    var popup = document.getElementById('aicw-ask-ai-popup');
+    if (popup) {
+      var wasOpen = popupState.isOpen;
+      popup.parentNode.removeChild(popup);
+      createPopup(savedConfig, popupState.services, popupState.shareServices);
+      if (wasOpen) openPopup();
+    }
+  }
+
+  function setupThemeListeners(config) {
+    if (!config.autoTheme) return;
+
+    // Listen for browser prefers-color-scheme changes
+    if (window.matchMedia) {
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      var handler = function () { reapplyTheme(); };
+      if (mq.addEventListener) {
+        mq.addEventListener('change', handler);
+      } else if (mq.addListener) {
+        mq.addListener(handler);
+      }
+    }
+
+    // Listen for localStorage changes (from other tabs or same-page JS)
+    window.addEventListener('storage', function (e) {
+      if (config.themeStorage && config.themeStorage !== 'none') {
+        var varName = config.themeStorage.split('=')[0].trim();
+        if (e.key === varName) {
+          reapplyTheme();
+        }
+      }
+    });
   }
 
   // ========================================================================
@@ -768,6 +914,9 @@
     injectStyles(config);
     createBar(config, services, shareServices);
     createPopup(config, services, shareServices);
+
+    // Set up live theme switching listeners
+    setupThemeListeners(config);
   }
 
   // ========================================================================

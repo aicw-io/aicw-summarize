@@ -12,7 +12,7 @@ Add this single line to your HTML, right before `</body>`:
 <script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"></script>
 ```
 
-That's it. A floating "Summarize" button will appear on the right side of the page. Clicking it opens a popup with links to AI services (ChatGPT, Claude, Perplexity, Gemini, Grok) and share buttons (WhatsApp, Telegram, X, Gmail, LinkedIn).
+That's it. A floating "Summarize" button will appear on the right side of the page. Clicking it opens a popup with links to AI services (ChatGPT, Gemini, Claude, Perplexity, Grok) and share buttons (WhatsApp, Telegram, X, Gmail, LinkedIn). The widget automatically detects dark/light mode from your browser and site settings.
 
 To pin to a specific release (recommended for production):
 
@@ -45,31 +45,59 @@ All configuration is done via `data-*` attributes on the script tag.
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `data-summarize` | `true` \| `false` | `true` | Enable/disable AI summarize section |
-| `data-services` | string | `gemini,chatgpt,perplexity,claude,grok` | Comma-separated list of AI services to show |
-| `data-prompt` | string | `Summarize this page:` | Custom prompt sent to AI services |
+| `data-services` | string | `chatgpt,gemini,claude,perplexity,grok` | Comma-separated list of AI services to show |
+| `data-prompt` | string | `Summarize this page:` | Custom prompt sent to AI services. Use `\|` to separate multiple prompts — one is picked randomly per click |
 | `data-share` | `true` \| `false` | `true` | Enable/disable share section |
 | `data-share-services` | string | `whatsapp,telegram,x,gmail,linkedin` | Comma-separated list of share services |
 
-### Colors
+### Dark Mode
+
+The widget automatically adapts to dark/light mode. By default it checks `localStorage` for a `theme` variable set to `dark`, then falls back to the browser's `prefers-color-scheme` media query.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `data-bg-color` | CSS color | `rgba(255,255,255,0.92)` | Popup background color |
-| `data-text-color` | CSS color | `#374151` | Text color in the popup |
-| `data-accent-color` | hex color | (from text-color) | Accent gradient color on the bar/popup edge |
-| `data-icon-color` | CSS color | `#1f2937` | Icon fill color |
-| `data-button-bg-color` | CSS color | `rgba(255,255,255,0.85)` | Trigger button background |
-| `data-button-text-color` | CSS color | (from text-color) | Trigger button text color |
+| `data-auto-theme` | `true` \| `false` | `true` | Enable/disable automatic dark/light mode detection |
+| `data-theme-storage` | string | `theme=dark` | localStorage variable and value that indicates dark mode, in `varName=darkValue` format. Set to `none` to skip localStorage and rely only on browser preference |
+
+**How detection works:**
+1. Check `localStorage.getItem("theme")` — if it equals `"dark"`, use dark mode
+2. If localStorage has no value (or `data-theme-storage="none"`), fall back to `prefers-color-scheme: dark`
+3. The widget listens for changes (browser theme toggle, localStorage updates from other tabs) and switches live
+
+**Built-in color defaults:**
+
+| | Light mode | Dark mode |
+|---|---|---|
+| Background | `rgba(255,255,255,0.92)` | `rgba(30,30,30,0.95)` |
+| Text | `#374151` | `#e5e7eb` |
+| Icons | `#1f2937` | `#d1d5db` |
+| Button background | `rgba(255,255,255,0.85)` | `rgba(30,30,30,0.9)` |
+| Accent | (from text color) | `#818cf8` |
+
+### Colors (manual override)
+
+Any explicit color attribute overrides the auto-detected theme colors. Use these when you want full control or need to match specific brand colors.
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `data-bg-color` | CSS color | (auto) | Popup background color |
+| `data-text-color` | CSS color | (auto) | Text color in the popup |
+| `data-accent-color` | hex color | (auto) | Accent gradient color on the bar/popup edge |
+| `data-icon-color` | CSS color | (auto) | Icon fill color |
+| `data-button-bg-color` | CSS color | (auto) | Trigger button background |
+| `data-button-text-color` | CSS color | (auto) | Trigger button text color |
 
 ## Supported AI Services
 
 | Key | Service | What happens |
 |-----|---------|--------------|
 | `chatgpt` | ChatGPT | Opens chat.openai.com with the page URL as a prompt |
+| `gemini` | Gemini | Opens Google AI search with the page URL |
 | `claude` | Claude | Opens claude.ai with the page URL as a prompt |
 | `perplexity` | Perplexity | Opens perplexity.ai search with the page URL |
-| `gemini` | Gemini | Opens Google AI search with the page URL |
 | `grok` | Grok | Opens Grok on X with the page URL |
+| `deepseek` | DeepSeek | Opens chat.deepseek.com with the page URL |
+| `copilot` | Copilot | Opens Microsoft Copilot with the page URL |
 
 ## Supported Share Services
 
@@ -81,6 +109,9 @@ All configuration is done via `data-*` attributes on the script tag.
 | `facebook` | Facebook |
 | `linkedin` | LinkedIn |
 | `reddit` | Reddit |
+| `threads` | Threads |
+| `bluesky` | Bluesky |
+| `mastodon` | Mastodon |
 | `gmail` | Gmail |
 | `email` | Email (mailto:) |
 | `copy` | Copy link to clipboard |
@@ -93,25 +124,54 @@ All configuration is done via `data-*` attributes on the script tag.
 <script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"></script>
 ```
 
-### Custom position and label
+### Custom position and custom label
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
   data-position="bottom"
-  data-label="Ask AI"
+  data-label="Summarize"
 ></script>
 ```
 
-### Custom colors (dark theme)
+### Auto dark mode (default behavior)
+
+Dark mode is automatic — no configuration needed. The widget reads the browser's `prefers-color-scheme` and checks `localStorage.theme`. To use a different localStorage variable:
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
+  data-theme-storage="darkMode=true"
+></script>
+```
+
+To disable auto-detection and force light mode:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
+  data-auto-theme="false"
+></script>
+```
+
+### Custom colors (manual dark theme override)
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
+  data-auto-theme="false"
   data-bg-color="rgba(30,30,30,0.95)"
   data-text-color="#e5e7eb"
   data-accent-color="#818cf8"
   data-icon-color="#d1d5db"
   data-button-bg-color="rgba(30,30,30,0.9)"
   data-button-text-color="#e5e7eb"
+></script>
+```
+
+### Random prompts
+
+Use `|` to separate multiple prompt variations — one is picked randomly each time a user clicks an AI service:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/aicw-io/aicw-summarize@latest/dist/aicw-summarize.min.js"
+  data-prompt="Summarize this page:|Explain this article in simple terms:|Give me the key takeaways from:"
 ></script>
 ```
 
@@ -193,7 +253,7 @@ npm run validate
 - **No tracking / analytics** — the widget makes zero network calls (only navigates when user clicks a service link)
 - **CSS isolation** — all styles use high-specificity `#aicw-ask-ai-*` selectors to avoid conflicts
 - **iframe-safe** — automatically disabled inside iframes to prevent recursion
-- **~26 KB minified** — lightweight enough for any website
+- **~34 KB minified** — lightweight enough for any website
 
 ## License
 
