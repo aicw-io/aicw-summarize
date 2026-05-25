@@ -188,9 +188,12 @@
     services: 'chatgpt,gemini,claude,perplexity,grok',
     prompt: 'Summarize this page:',
     mobilePosition: 'bottom',
+    rememberCloseDays: 30,
     shareEnabled: true,
     shareServices: 'whatsapp,telegram,x,gmail,linkedin'
   };
+
+  var CLOSED_STORAGE_KEY = 'aicw-summarize-closed-until';
 
   var LIGHT_COLORS = {
     bgColor: 'rgba(255,255,255,0.92)',
@@ -266,6 +269,7 @@
     // Position
     config.position = scriptEl.getAttribute('data-position') || DEFAULTS.position;
     config.mobilePosition = scriptEl.getAttribute('data-mobile-position') || DEFAULTS.mobilePosition;
+    config.rememberCloseDays = parseRememberCloseDays(scriptEl.getAttribute('data-remember-close-days'));
 
     // Services
     config.services = scriptEl.getAttribute('data-services') || DEFAULTS.services;
@@ -299,6 +303,12 @@
     config.paths = scriptEl.getAttribute('data-paths') || '';
 
     return config;
+  }
+
+  function parseRememberCloseDays(value) {
+    if (value === null || value === '') return DEFAULTS.rememberCloseDays;
+    var days = parseFloat(value);
+    return isNaN(days) || days < 0 ? DEFAULTS.rememberCloseDays : days;
   }
 
   function applyThemeColors(config) {
@@ -373,6 +383,7 @@
     @media(max-width:767px){#aicw-ask-ai-bar::before{left:0!important;right:auto!important;border-radius:3px 0 0 3px!important}}\
     @media(max-width:767px){#aicw-ask-ai-bar.aicw-mobile-top{top:12px!important;bottom:auto!important}}\
     @media(max-width:767px){#aicw-ask-ai-bar.aicw-mobile-bottom{bottom:12px!important;top:auto!important}}\
+    @media(max-width:767px){#aicw-ask-ai-bar.aicw-mobile-none,#aicw-ask-ai-bar.aicw-mobile-none~#aicw-ask-ai-popup{display:none!important}}\
     @media(max-width:767px){#aicw-ask-ai-popup{left:8px!important;right:8px!important;bottom:0!important;top:auto!important;border-radius:16px 16px 0 0;padding:16px;transform:translateY(100%);transition:transform 0.3s,opacity 0.2s}}\
     @media(max-width:767px){#aicw-ask-ai-popup.aicw-visible{transform:translateY(0)}}\
     @media(max-width:767px){.aicw-popup-icons-row{gap:6px;padding:8px 10px}}\
@@ -827,6 +838,35 @@
     });
   }
 
+  function isClosedRemembered() {
+    try {
+      var value = localStorage.getItem(CLOSED_STORAGE_KEY);
+      if (!value) return false;
+      if (value === 'forever') return true;
+
+      var expiresAt = parseInt(value, 10);
+      if (isNaN(expiresAt) || expiresAt <= Date.now()) {
+        localStorage.removeItem(CLOSED_STORAGE_KEY);
+        return false;
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function rememberClosed(config) {
+    try {
+      if (config.rememberCloseDays === 0) {
+        localStorage.setItem(CLOSED_STORAGE_KEY, 'forever');
+      } else {
+        localStorage.setItem(CLOSED_STORAGE_KEY, String(Date.now() + config.rememberCloseDays * 86400000));
+      }
+    } catch (e) {
+      // localStorage may be unavailable
+    }
+  }
+
   // ========================================================================
   // Create Floating Bar DOM (Trigger Button)
   // ========================================================================
@@ -888,6 +928,7 @@
     closeBtn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
+      rememberClosed(config);
       bar.style.display = 'none';
       var popup = document.getElementById('aicw-ask-ai-popup');
       if (popup) popup.style.display = 'none';
@@ -920,7 +961,7 @@
     var popup = document.getElementById('aicw-ask-ai-popup');
     if (!bar) return;
 
-    var show = matchesCurrentPath(savedConfig);
+    var show = matchesCurrentPath(savedConfig) && !isClosedRemembered();
     if (show) {
       bar.style.display = '';
       if (popup) popup.style.display = '';
