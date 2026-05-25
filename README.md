@@ -47,8 +47,9 @@ All configuration is done via `data-*` attributes on the script tag.
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `data-position` | `left` \| `right` \| `top` \| `bottom` | `right` | Position of the floating trigger bar |
-| `data-mobile-position` | `top` \| `bottom` | `bottom` | Position on mobile devices |
+| `data-mobile-position` | `top` \| `bottom` \| `none` | `bottom` | Position on mobile devices. Set to `none` to hide on mobile devices. |
 | `data-label` | string | auto | Custom label for the trigger button. Auto-detects: "Summarize" (if AI enabled) or "Share" (if share-only) |
+| `data-remember-close-days` | number | `30` | Remember the Hide button dismissal for this many days. Set to `0` to remember forever. |
 
 ### Features
 
