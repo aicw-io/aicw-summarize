@@ -560,7 +560,7 @@
     closeBtn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      closePopup();
+      hideWidget(config);
     });
     popup.appendChild(closeBtn);
 
@@ -867,6 +867,25 @@
     }
   }
 
+  function hideWidget(config) {
+    rememberClosed(config);
+
+    var bar = document.getElementById('aicw-ask-ai-bar');
+    var popup = document.getElementById('aicw-ask-ai-popup');
+
+    popupState.isOpen = false;
+    if (bar) {
+      bar.style.display = 'none';
+      bar.setAttribute('aria-expanded', 'false');
+    }
+    if (popup) {
+      popup.classList.remove('aicw-visible');
+      popup.style.display = 'none';
+    }
+
+    document.removeEventListener('click', handleClickOutside);
+  }
+
   // ========================================================================
   // Create Floating Bar DOM (Trigger Button)
   // ========================================================================
@@ -928,10 +947,7 @@
     closeBtn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      rememberClosed(config);
-      bar.style.display = 'none';
-      var popup = document.getElementById('aicw-ask-ai-popup');
-      if (popup) popup.style.display = 'none';
+      hideWidget(config);
     });
     bar.appendChild(closeBtn);
 
