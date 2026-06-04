@@ -6,7 +6,9 @@
   "scripts": {
     "build": "node build.js",
     "dev": "node build.js --watch",
-    "validate": "node build.js --validate-only"
+    "validate": "node build.js --validate-only",
+    "safety": "node scripts/safety-check.js",
+    "test": "npm run validate && npm run safety"
   },
   "author": "Eugene Mironichev - www.aicw.io",
   "license": "MIT",
