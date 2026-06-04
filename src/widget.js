@@ -180,6 +180,32 @@
     return 'linear-gradient(180deg,rgba(' + base + ',0.08) 0%,rgba(' + base + ',0.20) 50%,rgba(' + base + ',0.08) 100%)';
   }
 
+  function isSafeCssColor(value) {
+    if (!value || typeof value !== 'string') return false;
+    var color = value.trim();
+    if (!color || color.length > 80) return false;
+
+    // Prevent declaration breakouts before asking the browser to parse it.
+    if (/[;{}]/.test(color)) return false;
+
+    if (typeof window !== 'undefined' && window.CSS && typeof window.CSS.supports === 'function') {
+      return window.CSS.supports('color', color);
+    }
+
+    return /^#[0-9a-fA-F]{3,8}$/.test(color) ||
+      /^(rgb|rgba|hsl|hsla)\([\d\s,%.+-]+\)$/.test(color) ||
+      /^[a-zA-Z]+$/.test(color);
+  }
+
+  function sanitizeCssColor(value) {
+    if (!isSafeCssColor(value)) return '';
+    return value.trim();
+  }
+
+  function enumValue(value, allowed, fallback) {
+    return allowed.indexOf(value) !== -1 ? value : fallback;
+  }
+
   // ========================================================================
   // Configuration Defaults
   // ========================================================================
@@ -196,19 +222,19 @@
   var CLOSED_STORAGE_KEY = 'aicw-summarize-closed-until';
 
   var LIGHT_COLORS = {
-    bgColor: 'rgba(255,255,255,0.92)',
+    bgColor: '#ffffff',
     textColor: '#374151',
     iconColor: '#1f2937',
-    buttonBgColor: 'rgba(255,255,255,0.85)',
+    buttonBgColor: '#ffffff',
     buttonTextColor: '',
     accentColor: ''
   };
 
   var DARK_COLORS = {
-    bgColor: 'rgba(30,30,30,0.95)',
+    bgColor: '#1f2937',
     textColor: '#e5e7eb',
     iconColor: '#d1d5db',
-    buttonBgColor: 'rgba(30,30,30,0.9)',
+    buttonBgColor: '#111827',
     buttonTextColor: '#e5e7eb',
     accentColor: '#818cf8'
   };
@@ -267,8 +293,8 @@
     config.enabled = enabled !== 'false' && enabled !== '0';
 
     // Position
-    config.position = scriptEl.getAttribute('data-position') || DEFAULTS.position;
-    config.mobilePosition = scriptEl.getAttribute('data-mobile-position') || DEFAULTS.mobilePosition;
+    config.position = enumValue(scriptEl.getAttribute('data-position'), ['left', 'right', 'top', 'bottom'], DEFAULTS.position);
+    config.mobilePosition = enumValue(scriptEl.getAttribute('data-mobile-position'), ['top', 'bottom', 'none'], DEFAULTS.mobilePosition);
     config.rememberCloseDays = parseRememberCloseDays(scriptEl.getAttribute('data-remember-close-days'));
 
     // Services
@@ -281,12 +307,12 @@
     config.shareServices = scriptEl.getAttribute('data-share-services') || DEFAULTS.shareServices;
 
     // Colors (explicit overrides from data attributes)
-    config._explicitBgColor = scriptEl.getAttribute('data-bg-color') || '';
-    config._explicitTextColor = scriptEl.getAttribute('data-text-color') || '';
-    config._explicitAccentColor = scriptEl.getAttribute('data-accent-color') || '';
-    config._explicitIconColor = scriptEl.getAttribute('data-icon-color') || '';
-    config._explicitButtonBgColor = scriptEl.getAttribute('data-button-bg-color') || '';
-    config._explicitButtonTextColor = scriptEl.getAttribute('data-button-text-color') || '';
+    config._explicitBgColor = sanitizeCssColor(scriptEl.getAttribute('data-bg-color'));
+    config._explicitTextColor = sanitizeCssColor(scriptEl.getAttribute('data-text-color'));
+    config._explicitAccentColor = sanitizeCssColor(scriptEl.getAttribute('data-accent-color'));
+    config._explicitIconColor = sanitizeCssColor(scriptEl.getAttribute('data-icon-color'));
+    config._explicitButtonBgColor = sanitizeCssColor(scriptEl.getAttribute('data-button-bg-color'));
+    config._explicitButtonTextColor = sanitizeCssColor(scriptEl.getAttribute('data-button-text-color'));
 
     // Theme detection
     var autoTheme = scriptEl.getAttribute('data-auto-theme');
@@ -331,27 +357,27 @@
   // CSS Styles (generated dynamically for gradient and custom colors)
   // ========================================================================
   function getWidgetCss(gradient, config) {
-    var barBg = config.buttonBgColor || 'rgba(255,255,255,0.85)';
+    var barBg = config.buttonBgColor || '#ffffff';
     var barText = config.buttonTextColor || config.textColor || '#374151';
     var iconColor = config.iconColor || '#1f2937';
-    var popupBg = config.bgColor || 'rgba(255,255,255,0.92)';
+    var popupBg = config.bgColor || '#ffffff';
     var textColor = config.textColor || '#374151';
     var secondaryText = config.textColor || '#6b7280';
 
     return '\
-    /* Trigger Bar - Glassmorphism */\
-    #aicw-ask-ai-bar{position:fixed;z-index:2147483646;display:flex;align-items:center;background:' + barBg + ';backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.5);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.1);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;transition:opacity 0.2s,box-shadow 0.2s;overflow:hidden;cursor:pointer}\
+    /* Trigger Bar */\
+    #aicw-ask-ai-bar{position:fixed;z-index:2147483000;display:flex;align-items:center;background:' + barBg + ';border:1px solid rgba(0,0,0,0.08);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.1);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;transition:box-shadow 0.2s;overflow:hidden;cursor:pointer}\
     #aicw-ask-ai-bar:hover{box-shadow:0 4px 24px rgba(0,0,0,0.12)}\
-    .aicw-trigger{display:flex;align-items:center;gap:8px;padding:0;background:none;border:none;cursor:pointer;font-family:inherit}\
-    .aicw-trigger-text{font-size:14px;font-weight:500;color:' + barText + ';white-space:nowrap}\
-    .aicw-close{display:flex;align-items:center;justify-content:center;width:24px;height:24px;background:rgba(0,0,0,0.05);border:none;border-radius:4px;color:' + barText + ';font-size:16px;cursor:pointer;transition:all 0.15s}\
-    .aicw-close:hover{background:rgba(0,0,0,0.1)}\
+    #aicw-ask-ai-bar .aicw-trigger{display:flex;align-items:center;gap:8px;padding:0;background:none;border:none;cursor:pointer;font-family:inherit}\
+    #aicw-ask-ai-bar .aicw-trigger-text{font-size:14px;font-weight:500;color:' + barText + ';white-space:nowrap}\
+    #aicw-ask-ai-bar .aicw-close{display:flex;align-items:center;justify-content:center;width:24px;height:24px;background:rgba(0,0,0,0.05);border:none;border-radius:4px;color:' + barText + ';font-size:16px;cursor:pointer;transition:all 0.15s}\
+    #aicw-ask-ai-bar .aicw-close:hover{background:rgba(0,0,0,0.1)}\
     /* Horizontal layout (top/bottom) */\
     #aicw-ask-ai-bar.aicw-top,#aicw-ask-ai-bar.aicw-bottom{flex-direction:row;gap:10px;padding:10px 14px}\
     #aicw-ask-ai-bar.aicw-top .aicw-trigger,#aicw-ask-ai-bar.aicw-bottom .aicw-trigger{flex-direction:row}\
     #aicw-ask-ai-bar.aicw-top::before,#aicw-ask-ai-bar.aicw-bottom::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:' + gradient + ';border-radius:3px 0 0 3px}\
-    .aicw-top{top:12px;left:50%;transform:translateX(-50%)}\
-    .aicw-bottom{bottom:12px;left:50%;transform:translateX(-50%)}\
+    #aicw-ask-ai-bar.aicw-top{top:12px;left:50%;transform:translateX(-50%)}\
+    #aicw-ask-ai-bar.aicw-bottom{bottom:12px;left:50%;transform:translateX(-50%)}\
     /* Vertical layout (left/right) */\
     #aicw-ask-ai-bar.aicw-left,#aicw-ask-ai-bar.aicw-right{flex-direction:column;gap:8px;padding:12px 10px}\
     #aicw-ask-ai-bar.aicw-left .aicw-trigger,#aicw-ask-ai-bar.aicw-right .aicw-trigger{flex-direction:column}\
@@ -359,23 +385,23 @@
     #aicw-ask-ai-bar.aicw-left .aicw-trigger-text{transform:rotate(180deg)}\
     #aicw-ask-ai-bar.aicw-right::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:' + gradient + ';border-radius:3px 0 0 3px}\
     #aicw-ask-ai-bar.aicw-left::before{content:"";position:absolute;right:0;top:0;bottom:0;width:3px;background:' + gradient + ';border-radius:0 3px 3px 0}\
-    .aicw-left{left:12px;top:50%;transform:translateY(-50%)}\
-    .aicw-right{right:12px;top:50%;transform:translateY(-50%)}\
-    /* Popup - Glassmorphism */\
-    #aicw-ask-ai-popup{position:fixed;z-index:2147483647;background:' + popupBg + ';backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.5);border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.15);padding:8px;opacity:0;pointer-events:none;transition:opacity 0.2s;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;min-width:180px;max-width:280px}\
+    #aicw-ask-ai-bar.aicw-left{left:12px;top:50%;transform:translateY(-50%)}\
+    #aicw-ask-ai-bar.aicw-right{right:12px;top:50%;transform:translateY(-50%)}\
+    /* Popup */\
+    #aicw-ask-ai-popup{position:fixed;z-index:2147483001;display:none;background:' + popupBg + ';border:1px solid rgba(0,0,0,0.08);border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.15);padding:8px;pointer-events:none;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;min-width:180px;max-width:280px}\
     #aicw-ask-ai-popup::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:' + gradient + ';border-radius:3px 0 0 3px}\
-    #aicw-ask-ai-popup.aicw-visible{opacity:1;pointer-events:auto}\
-    .aicw-popup-title{padding:8px 12px;font-size:11px;font-weight:600;color:' + secondaryText + ';text-transform:uppercase;letter-spacing:0.5px}\
-    .aicw-popup-icons-row{display:flex;gap:8px;padding:8px 12px;flex-wrap:wrap}\
-    .aicw-popup-icon-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:rgba(0,0,0,0.04);color:' + iconColor + ';text-decoration:none;transition:background 0.15s,transform 0.1s}\
-    .aicw-popup-icon-btn:hover{background:rgba(0,0,0,0.08);transform:scale(1.05)}\
-    .aicw-popup-icon-btn svg{width:22px;height:22px}\
-    .aicw-popup-separator{height:1px;background:rgba(0,0,0,0.08);margin:8px 0}\
-    .aicw-popup-close{position:absolute;top:8px;right:8px;display:flex;align-items:center;justify-content:center;width:20px;height:20px;background:rgba(0,0,0,0.05);border:none;border-radius:4px;color:#9ca3af;font-size:14px;cursor:pointer;transition:all 0.15s;z-index:1}\
-    .aicw-popup-close:hover{background:rgba(0,0,0,0.1);color:' + textColor + '}\
-    .aicw-popup-description-wrapper{padding:12px 14px;margin:-8px -8px 0 -8px;background:rgba(0,0,0,0.03);border-radius:12px 12px 0 0;border-bottom:1px solid rgba(0,0,0,0.06)}\
-    .aicw-popup-description-label{display:block;font-size:10px;font-weight:600;color:' + secondaryText + ';text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}\
-    .aicw-popup-description{font-size:13px;line-height:1.5;color:' + textColor + ';overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical}\
+    #aicw-ask-ai-popup.aicw-visible{display:block;pointer-events:auto}\
+    #aicw-ask-ai-popup .aicw-popup-title{padding:8px 12px;font-size:11px;font-weight:600;color:' + secondaryText + ';text-transform:uppercase;letter-spacing:0.5px}\
+    #aicw-ask-ai-popup .aicw-popup-icons-row{display:flex;gap:8px;padding:8px 12px;flex-wrap:wrap}\
+    #aicw-ask-ai-popup .aicw-popup-icon-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:rgba(0,0,0,0.04);color:' + iconColor + ';text-decoration:none;transition:background 0.15s,transform 0.1s}\
+    #aicw-ask-ai-popup .aicw-popup-icon-btn:hover{background:rgba(0,0,0,0.08);transform:scale(1.05)}\
+    #aicw-ask-ai-popup .aicw-popup-icon-btn svg{width:22px;height:22px}\
+    #aicw-ask-ai-popup .aicw-popup-separator{height:1px;background:rgba(0,0,0,0.08);margin:8px 0}\
+    #aicw-ask-ai-popup .aicw-popup-close{position:absolute;top:8px;right:8px;display:flex;align-items:center;justify-content:center;width:20px;height:20px;background:rgba(0,0,0,0.05);border:none;border-radius:4px;color:#9ca3af;font-size:14px;cursor:pointer;transition:all 0.15s;z-index:1}\
+    #aicw-ask-ai-popup .aicw-popup-close:hover{background:rgba(0,0,0,0.1);color:' + textColor + '}\
+    #aicw-ask-ai-popup .aicw-popup-description-wrapper{padding:12px 14px;margin:-8px -8px 0 -8px;background:rgba(0,0,0,0.03);border-radius:12px 12px 0 0;border-bottom:1px solid rgba(0,0,0,0.06)}\
+    #aicw-ask-ai-popup .aicw-popup-description-label{display:block;font-size:10px;font-weight:600;color:' + secondaryText + ';text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}\
+    #aicw-ask-ai-popup .aicw-popup-description{font-size:13px;line-height:1.5;color:' + textColor + ';overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical}\
     /* Mobile: horizontal bar + bottom sheet popup */\
     @media(max-width:767px){#aicw-ask-ai-bar{flex-direction:row!important;gap:10px!important;padding:10px 14px!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important}}\
     @media(max-width:767px){#aicw-ask-ai-bar .aicw-trigger{flex-direction:row!important}}\
@@ -384,10 +410,9 @@
     @media(max-width:767px){#aicw-ask-ai-bar.aicw-mobile-top{top:12px!important;bottom:auto!important}}\
     @media(max-width:767px){#aicw-ask-ai-bar.aicw-mobile-bottom{bottom:12px!important;top:auto!important}}\
     @media(max-width:767px){#aicw-ask-ai-bar.aicw-mobile-none,#aicw-ask-ai-bar.aicw-mobile-none~#aicw-ask-ai-popup{display:none!important}}\
-    @media(max-width:767px){#aicw-ask-ai-popup{left:8px!important;right:8px!important;bottom:0!important;top:auto!important;border-radius:16px 16px 0 0;padding:16px;transform:translateY(100%);transition:transform 0.3s,opacity 0.2s}}\
-    @media(max-width:767px){#aicw-ask-ai-popup.aicw-visible{transform:translateY(0)}}\
-    @media(max-width:767px){.aicw-popup-icons-row{gap:6px;padding:8px 10px}}\
-    @media(max-width:767px){.aicw-popup-icon-btn{width:36px;height:36px}}\
+    @media(max-width:767px){#aicw-ask-ai-popup{left:8px!important;right:8px!important;bottom:0!important;top:auto!important;border-radius:16px 16px 0 0;padding:16px}}\
+    @media(max-width:767px){#aicw-ask-ai-popup .aicw-popup-icons-row{gap:6px;padding:8px 10px}}\
+    @media(max-width:767px){#aicw-ask-ai-popup .aicw-popup-icon-btn{width:36px;height:36px}}\
     ';
   }
 
