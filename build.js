@@ -85,7 +85,9 @@ function build() {
 
   const version = generateVersion();
   const banner = `/*! AICW Ask AI Widget v${version} */`;
-  const minified = fs.readFileSync(OUTPUT_FILE, 'utf8');
+  const minified = fs.readFileSync(OUTPUT_FILE, 'utf8')
+    .replace(/\n?\/\/# sourceMappingURL=.*$/m, '')
+    .replace(/\n?\/\*# sourceMappingURL=[\s\S]*?\*\/\s*$/, '');
   fs.writeFileSync(OUTPUT_FILE, banner + minified);
 
   const outputSize = getFileSize(OUTPUT_FILE);
